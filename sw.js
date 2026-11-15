@@ -1,6 +1,6 @@
 /* Service worker: caches the app so it opens and works without internet.
    Bump VERSION whenever you change any file, so phones pick up the update. */
-const VERSION='juz30-v1';
+const VERSION='juz30-v3';
 const FILES=['./','index.html','manifest.webmanifest','fonts/amiri-regular.woff2',
   'icons/icon-192.png','icons/icon-512.png','icons/icon-maskable-512.png','icons/apple-touch-icon.png','icons/favicon-32.png'];
 
@@ -16,7 +16,9 @@ self.addEventListener('activate',function(e){
 });
 self.addEventListener('fetch',function(e){
   var req=e.request;
-  if(req.method!=='GET'||new URL(req.url).origin!==location.origin)return;
+  var u=new URL(req.url);
+  if(req.method!=='GET'||u.origin!==location.origin)return;
+  if(u.pathname.indexOf('/audio/')>=0)return; /* audio streams straight from the network (range requests) */
   e.respondWith(caches.match(req,{ignoreSearch:true}).then(function(hit){
     if(hit)return hit;
     return fetch(req).then(function(res){
