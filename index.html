@@ -91,7 +91,7 @@ h1,h2,h3,p{margin:0}
   background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'><g fill='none' stroke='%23ecd085' stroke-opacity='.22' stroke-width='1'><rect x='9' y='9' width='26' height='26'/><rect x='9' y='9' width='26' height='26' transform='rotate(45 22 22)'/></g></svg>");
   -webkit-mask-image:linear-gradient(to bottom,#000 20%,transparent 100%);mask-image:linear-gradient(to bottom,#000 20%,transparent 100%)}
 .hero-kicker{font-size:.85rem;letter-spacing:.04em;color:var(--hero-gold);font-weight:500}
-.hero-ar{font-family:var(--font-quran);font-weight:400;font-size:clamp(2.4rem,11vw,3.3rem);line-height:1.6;color:var(--hero-gold)}
+.hero-ar{font-family:var(--font-quran);font-weight:400;font-size:clamp(2.4rem,11vw,3.3rem);line-height:2;margin-top:10px;color:var(--hero-gold)}
 .hero-sub{font-size:.92rem;opacity:.9}
 .stats{margin-top:-38px;position:relative;display:flex;gap:16px;align-items:center}
 .ring{flex:none;position:relative;width:104px;height:104px}
@@ -235,6 +235,185 @@ h1,h2,h3,p{margin:0}
 @font-face{font-family:'Amiri';src:url('fonts/amiri-regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
 .install{display:flex;flex-direction:column;gap:8px;align-items:center;text-align:center}
 .install p{margin:0;color:var(--muted);font-size:.88rem}
+.ibar{position:fixed;z-index:15;left:0;right:0;bottom:calc(72px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;pointer-events:none;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.ibar-card{pointer-events:auto;width:100%;max-width:608px;display:flex;flex-direction:column;gap:10px;padding:14px;background:var(--surface);color:var(--ink);border:1px solid var(--line);border-radius:20px;box-shadow:0 12px 32px rgba(0,0,0,.22);animation:ibar-in .35s ease-out}
+.ibar-head{display:flex;gap:12px;align-items:center}
+.ibar-head img{width:48px;height:48px;border-radius:12px;flex:none}
+.ibar-head b{display:block;font-size:1rem}
+.ibar-head span{display:block;font-size:.84rem;color:var(--muted);line-height:1.5}
+.ibar-acts{display:flex;gap:8px}
+.ibar-acts .btn{flex:1}
+@keyframes ibar-in{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion:reduce){.ibar-card{animation:none}}
+</style>
+<style id="v2">
+/* v2 look: bright airy ground, one hue per surah (set as --h on each element), orange/pink challenge and blue/violet free-play cards. Tokens below override the first palette. */
+:root{
+  --bg:#f3f6ff; --surface:#ffffff; --ink:#172033; --muted:#566079; --line:#dbe1f2;
+  --accent:#0b7f73; --accent-ink:#ffffff; --accent-soft:#d9f4ef;
+  --gold:#9a6a00; --ok:#12803f; --warn:#c2410c; --fire:#c2410c;
+  --hero-a:#0b8f8a; --hero-b:#3f6fe0; --hero-ink:#ffffff; --hero-gold:#ffe58a;
+  --tint-l:95%; --tint2-l:86%; --stroke-l:42%; --solid-l:40%; --txt-l:26%;
+  --card-s:90%; --card-l:97%; --card-line-l:88%; --solid-ink:#ffffff;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0d1220; --surface:#161d30; --ink:#e8ecf8; --muted:#9aa5c4; --line:#27304a;
+    --accent:#3dd6c3; --accent-ink:#04211d; --accent-soft:#14323a;
+    --gold:#f2c14e; --ok:#5ccf8e; --warn:#f2a574; --fire:#ff9a5c;
+    --hero-a:#0a4d57; --hero-b:#243b8a; --hero-ink:#ffffff; --hero-gold:#ffe58a;
+    --tint-l:21%; --tint2-l:31%; --stroke-l:62%; --solid-l:56%; --txt-l:88%;
+    --card-s:35%; --card-l:15%; --card-line-l:26%; --solid-ink:#0b1020;
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0d1220; --surface:#161d30; --ink:#e8ecf8; --muted:#9aa5c4; --line:#27304a;
+  --accent:#3dd6c3; --accent-ink:#04211d; --accent-soft:#14323a;
+  --gold:#f2c14e; --ok:#5ccf8e; --warn:#f2a574; --fire:#ff9a5c;
+  --hero-a:#0a4d57; --hero-b:#243b8a; --hero-ink:#ffffff; --hero-gold:#ffe58a;
+  --tint-l:21%; --tint2-l:31%; --stroke-l:62%; --solid-l:56%; --txt-l:88%;
+  --card-s:35%; --card-l:15%; --card-line-l:26%; --solid-ink:#0b1020;
+  color-scheme:dark;
+}
+
+/* icons */
+.ic{width:20px;height:20px;fill:currentColor;flex:none}
+.ics{width:20px;height:20px;fill:none;stroke:currentColor;stroke-width:2.4;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+/* medallions: a colour per surah */
+.medal rect{fill:hsl(var(--h,200) 90% var(--tint-l));stroke:hsl(var(--h,200) 70% var(--stroke-l));stroke-width:1.8}
+.medal text{fill:hsl(var(--h,200) 70% var(--txt-l))}
+.medal[data-s="1"] rect{fill:hsl(var(--h,200) 90% var(--tint2-l))}
+.medal[data-s="2"] rect{fill:hsl(var(--h,200) 75% var(--solid-l));stroke:hsl(var(--h,200) 75% var(--solid-l))}
+.medal[data-s="2"] text{fill:var(--solid-ink)}
+
+/* surah cards and progress grid */
+.scard{background:hsl(var(--h,200) var(--card-s) var(--card-l));border-color:hsl(var(--h,200) 60% var(--card-line-l));border-radius:20px}
+.gcell{background:hsl(var(--h,200) var(--card-s) var(--card-l));border-color:hsl(var(--h,200) 60% var(--card-line-l));border-radius:18px}
+.scard .bar i,.gcell .bar i{background:hsl(var(--h,200) 75% var(--solid-l))}
+.scard .bar.done i{background:var(--gold)}
+.scard .bar{background:hsl(var(--h,200) 40% var(--card-line-l))}
+.s-ar{color:var(--ink)}
+
+/* hero */
+.hero{background:
+  radial-gradient(circle at 12% 18%,rgba(255,214,102,.38),transparent 42%),
+  radial-gradient(circle at 92% 86%,rgba(255,110,170,.38),transparent 46%),
+  radial-gradient(circle at 80% 8%,rgba(120,240,200,.30),transparent 38%),
+  linear-gradient(160deg,var(--hero-a),var(--hero-b))}
+.hero-kicker{color:var(--hero-ink);opacity:.95;font-weight:700}
+.hero-sub{opacity:1}
+.btn.primary{background:linear-gradient(135deg,var(--accent),color-mix(in srgb,var(--accent) 60%,#2563eb))}
+
+/* bottom nav: four tabs, each with its own hue */
+.nav-in{grid-template-columns:repeat(4,1fr)}
+#n-home{--h:175}#n-surahs{--h:205}#n-challenge{--h:24}#n-progress{--h:275}
+.nav a{color:var(--muted)}
+.nav a[aria-current="page"]{background:hsl(var(--h) 90% var(--tint-l));color:hsl(var(--h) 70% var(--txt-l))}
+.nav a svg{stroke-width:2.1}
+
+/* home challenge card */
+.hcard{display:flex;align-items:center;gap:14px;padding:14px 16px;border-radius:22px;text-decoration:none;color:#fff;background:linear-gradient(135deg,#d9480f,#b5179e)}
+.hcard .hc-ic{width:46px;height:46px;border-radius:15px;background:rgba(255,255,255,.2);display:grid;place-items:center;flex:none}
+.hcard .hc-ic .ic{width:26px;height:26px}
+.hcard b{display:block;font-size:1.05rem}
+.hcard span{display:block;font-size:.85rem;opacity:.95}
+.hcard .go{margin-inline-start:auto;font-weight:800;font-size:.9rem;padding:7px 12px;border-radius:999px;background:#fff;color:#7c2d12;flex:none}
+
+/* challenge menu */
+.lvl{display:flex;gap:14px;align-items:center}
+.lvl-badge{width:64px;height:64px;border-radius:20px;display:grid;place-items:center;background:linear-gradient(135deg,#f59e0b,#e11d48);color:#fff;font-weight:800;font-size:1.6rem;flex:none}
+.lvl-main{flex:1;min-width:0;display:flex;flex-direction:column;gap:6px}
+.lvl-main b{font-size:1.1rem}
+.xpbar{height:9px;border-radius:5px;background:var(--line);overflow:hidden}
+.xpbar i{display:block;height:100%;background:linear-gradient(90deg,#f59e0b,#e11d48);border-radius:5px}
+.streak{display:flex;align-items:center;gap:6px;font-weight:800;color:var(--fire)}
+.streak .ic{width:24px;height:24px}
+.dcard,.fcard{border-radius:24px;padding:18px;color:#fff;display:flex;flex-direction:column;gap:10px}
+.dcard{background:linear-gradient(135deg,#d9480f,#b5179e)}
+.fcard{background:linear-gradient(135deg,#1d6fe0,#6d28d9)}
+.dcard h2,.fcard h2{font-size:1.25rem}
+.dcard p,.fcard p{font-size:.92rem;opacity:.97}
+.dcard .meta,.fcard .meta{display:flex;gap:8px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:5px;padding:4px 10px;border-radius:999px;background:rgba(255,255,255,.22);font-size:.8rem;font-weight:700}
+.tag .ic{width:15px;height:15px}
+.btn.light{background:#fff;border-color:#fff;color:#4a1d96;font-weight:800}
+.dcard .btn.light{color:#7c2d12}
+.btn.light[aria-disabled="true"]{opacity:.75;pointer-events:none}
+.fcard .pill{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.5);color:#fff}
+.fcard .pill[aria-pressed="true"]{background:#fff;color:#4a1d96;border-color:#fff}
+.fcard .pill:disabled{opacity:.5}
+.scope{display:flex;gap:8px;flex-wrap:wrap}
+.bgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(98px,1fr));gap:10px}
+.badge{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 6px;border-radius:18px;background:hsl(var(--h) 90% var(--tint-l));text-align:center;font-size:.78rem;line-height:1.4}
+.badge b{font-size:.82rem}
+.badge svg{width:32px;height:32px;fill:hsl(var(--h) 70% var(--stroke-l))}
+.badge.locked{filter:grayscale(1);opacity:.5}
+.badge span{color:var(--muted)}
+
+/* in-game */
+#play{display:flex;flex-direction:column;gap:14px}
+.hud{display:flex;align-items:center;justify-content:space-between;gap:10px;padding-top:4px}
+.hud-mid{font-weight:700;flex:1;text-align:center}
+.hud-r{display:flex;align-items:center;gap:8px}
+.hearts{display:flex;gap:2px;color:#e11d48}
+.hearts .off{color:var(--line)}
+.chipk{display:inline-flex;align-items:center;gap:5px;padding:6px 11px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-weight:800;font-size:.92rem;color:var(--fire)}
+.tbar{height:10px;border-radius:5px;background:var(--line);overflow:hidden}
+.tbar i{display:block;height:100%;width:100%;border-radius:5px;background:hsl(120 80% 42%)}
+.qcard{display:flex;flex-direction:column;gap:12px;text-align:center}
+.qprompt{font-weight:800;font-size:1.1rem}
+.qtext{text-align:center;direction:rtl;font-size:calc(var(--q-size)*.95)}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:12px 14px;border:2px solid hsl(var(--h) 70% 78%);background:hsl(var(--h) 90% var(--tint-l));border-radius:18px;cursor:pointer;text-align:right;color:var(--ink)}
+.opt .l{flex:none;min-width:34px;height:34px;padding:0 6px;border-radius:12px;background:hsl(var(--h) 75% var(--solid-l));color:var(--solid-ink);display:grid;place-items:center;font-weight:800;font-size:.8rem}
+.opt .tx{flex:1;min-width:0;overflow-wrap:anywhere;font-weight:600}
+.opt.ar-t .tx{font-family:var(--font-quran);font-size:1.5rem;line-height:1.9;direction:rtl;font-weight:400}
+.opt:disabled{cursor:default}
+.opt.good{border-color:var(--ok);background:color-mix(in srgb,var(--ok) 20%,var(--surface))}
+.opt.bad{border-color:var(--warn);background:color-mix(in srgb,var(--warn) 20%,var(--surface));animation:shake .35s}
+.fb{display:flex;flex-direction:column;gap:8px;padding:14px;border-radius:18px;background:var(--surface);border:2px solid var(--line)}
+.fb[data-ok="1"]{border-color:var(--ok)}
+.fb[data-ok="0"]{border-color:var(--warn)}
+.fbt{font-weight:800}
+.fb[data-ok="1"] .fbt{color:var(--ok)}
+.fb[data-ok="0"] .fbt{color:var(--warn)}
+.fbi{color:var(--muted);font-size:.9rem}
+.fbar{font-family:var(--font-quran);font-size:1.35rem;line-height:1.9;direction:rtl;text-align:right}
+
+/* result */
+.res{display:flex;flex-direction:column;gap:14px;align-items:center;text-align:center;padding-top:10px}
+.res h1{font-size:1.5rem}
+.stars{display:flex;gap:6px}
+.stars svg{width:52px;height:52px;fill:var(--line)}
+.stars svg.on{fill:#f5b301;animation:rise .5s ease-out both}
+.rstats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;width:100%}
+.rstats div{padding:12px 4px;border-radius:16px;background:var(--surface);border:1px solid var(--line)}
+.rstats b{display:block;font-size:1.3rem}
+.rstats span{font-size:.78rem;color:var(--muted)}
+.lvup{padding:8px 14px;border-radius:999px;background:linear-gradient(135deg,#f59e0b,#e11d48);color:#fff;font-weight:800;font-size:.9rem}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:30}
+.confetti i{position:absolute;top:-16px;width:9px;height:14px;border-radius:2px;animation:fall 2.8s linear forwards}
+@keyframes fall{to{transform:translateY(108vh) rotate(560deg)}}
+
+/* audio player */
+.player{display:flex;flex-direction:column;gap:10px}
+.pl-top{display:flex;align-items:center;justify-content:space-between;gap:12px}
+.pl-top b{display:block}
+.pl-play{width:54px;height:54px;border-radius:50%;border:none;cursor:pointer;display:grid;place-items:center;color:#fff;background:linear-gradient(135deg,#1d6fe0,#6d28d9);flex:none}
+.pl-play:disabled{background:var(--line);color:var(--muted);cursor:default}
+.pl-play .ic{width:26px;height:26px}
+.pl-play .pl-i-pause{display:none}
+.pl-play[data-on="1"] .pl-i-pause{display:block}
+.pl-play[data-on="1"] .pl-i-play{display:none}
+.pl-bar{display:flex;flex-direction:column;gap:4px}
+.pl-bar input[type=range]{width:100%;direction:ltr;accent-color:#6d28d9}
+.pl-time{display:flex;justify-content:space-between;direction:ltr;font-size:.8rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.pl-opts{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+@media (prefers-reduced-motion:reduce){.confetti{display:none}.stars svg.on{animation:none}}
 </style>
 </head><body>
 <div class="wrap" id="wrap" dir="rtl" lang="fa">
@@ -246,6 +425,9 @@ h1,h2,h3,p{margin:0}
       </a>
       <a id="n-surahs" href="#surahs">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 6h12M8 12h12M8 18h12"/><path d="M4 6h.01M4 12h.01M4 18h.01"/></svg><span>سوره‌ها</span>
+      </a>
+      <a id="n-challenge" href="#challenge">
+        <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3s1 3-1 5.5C9 11 7 12 7 15a5 5 0 0 0 10 0c0-2-1-3.5-2-5-.5 1-1 1.8-2 2 0-3-.5-6-1-9z"/></svg><span>چالش</span>
       </a>
       <a id="n-progress" href="#progress">
         <svg class="ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V4M19 20v-6"/></svg><span>پیشرفت</span>
@@ -326,13 +508,14 @@ function matchVerse(tail,a,b){
 
 /* ================= storage ================= */
 var KEY='juz30-v1';
-var store={p:{},last:0,size:2,t:0};
+var store={p:{},last:0,size:2,t:0,c:{xp:0,streak:0,bestStreak:0,last:'',daily:'',dailyScore:0,perfect:0,bestFree:0,games:0}};
 var sizes=[1.4,1.6,1.8,2.0,2.2,2.5];
 function loadLocal(){
   try{
     var raw=localStorage.getItem(KEY);
     if(raw){var o=JSON.parse(raw);
-      if(o&&o.p&&typeof o.p==='object'){store.p=o.p;store.last=o.last|0;store.t=o.t|0;if(typeof o.size==='number'&&o.size>=0&&o.size<sizes.length)store.size=o.size;}}
+      if(o&&o.p&&typeof o.p==='object'){store.p=o.p;store.last=o.last|0;store.t=o.t|0;if(typeof o.size==='number'&&o.size>=0&&o.size<sizes.length)store.size=o.size;}
+      if(o&&o.c&&typeof o.c==='object'){for(var ck in o.c){store.c[ck]=o.c[ck];}}}
   }catch(e){}
 }
 function saveLocal(){try{localStorage.setItem(KEY,JSON.stringify(store));}catch(e){}}
@@ -385,7 +568,7 @@ var ICON={
   back:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>'
 };
 function medal(id,s,size){
-  return '<svg class="medal" data-s="'+s+'" viewBox="0 0 48 48" width="'+size+'" height="'+size+'" aria-hidden="true">'
+  return '<svg class="medal" data-s="'+s+'" style="--h:'+hueOf(id)+'" viewBox="0 0 48 48" width="'+size+'" height="'+size+'" aria-hidden="true">'
     +'<rect x="9" y="9" width="30" height="30" rx="3"/>'
     +'<rect x="9" y="9" width="30" height="30" rx="3" transform="rotate(45 24 24)"/>'
     +'<text x="24" y="28.5" text-anchor="middle">'+fa(id)+'</text></svg>';
@@ -430,7 +613,7 @@ var ui={q:'',sort:'mushaf',filter:'all',hide:false};
 function pageHome(){
   var t=totals(),cid=continueId(),h='';
   h+='<section class="hero"><p class="hero-kicker">قرآن کریم، جزء ۳۰</p>'
-    +'<h1 class="hero-ar" lang="ar" dir="rtl">جُزْءُ عَمَّ</h1>'
+    +'<h1 class="hero-ar" lang="ar" dir="rtl">جزء عم</h1>'
     +'<p class="hero-sub">سورهٔ حمد و ۳۷ سورهٔ جزء ۳۰، مجموعاً ۵۷۱ آیه</p></section>';
   h+='<section class="card stats">'+ring(t.pct)
     +'<div class="stat-lines"><span class="big">'+fa(t.verses)+' از '+fa(TOTAL)+' آیه</span>'
@@ -447,6 +630,7 @@ function pageHome(){
       +'<div class="acts"><a class="btn primary" href="#'+mode+'-'+cid+'">'+(mode==='continue'?'ادامه':'شروع آزمون')+'</a>'
       +'<a class="btn" href="#read-'+cid+'">مطالعه</a></div></section>';
   }
+  h+=homeChallengeCard();
   var short=DATA.filter(function(x){return count(x.id)<x.v.length;}).sort(function(a,b){return a.v.length-b.v.length||b.id-a.id;}).slice(0,6);
   if(short.length){
     h+='<p class="sec">کوتاه‌ترین سوره‌های مانده</p><div class="chips">';
@@ -474,7 +658,7 @@ function listHTML(){
   if(!items.length)return '<p class="empty">سوره‌ای پیدا نشد.</p>';
   return items.map(function(s){
     var k=count(s.id),n=s.v.length;
-    return '<a class="scard" href="#read-'+s.id+'">'+medal(s.id,status(s.id),46)
+    return '<a class="scard" style="--h:'+hueOf(s.id)+'" href="#read-'+s.id+'">'+medal(s.id,status(s.id),46)
       +'<div class="s-main"><div class="s-ar" lang="ar">'+esc(s.ar)+'</div>'
       +'<div class="s-fa">'+esc(s.id===1?'حمد، جزء ۱':s.fa)+'، '+fa(n)+' آیه</div></div>'
       +'<div class="s-prog"><span class="s-num">'+fa(k)+'/'+fa(n)+'</span>'+bar(k/n,k>=n)+'</div></a>';
@@ -509,6 +693,7 @@ function pageRead(id){
     +bar(k/n,k>=n)+'<p class="muted small">'+progLine(id)+'</p>'
     +'<div class="acts" style="width:100%"><a class="btn primary" href="#exam-'+id+'">'+(k>=n?'مرور با آزمون':'آزمون حفظ')+'</a>'
     +(k>0&&k<n?'<a class="btn" href="#continue-'+id+'">ادامه از آیهٔ '+fa(k+1)+'</a>':'')+'</div></section>';
+  h+=playerHTML();
   h+='<div class="tools"><button type="button" class="pill" data-act="hide" aria-pressed="'+(ui.hide?'true':'false')+'">پنهان‌کردن متن برای مرور</button>'
     +'<div class="sizer"><button type="button" data-act="smaller" aria-label="کوچک‌تر کردن متن"'+(store.size===0?' disabled':'')+'>A−</button>'
     +'<button type="button" data-act="bigger" aria-label="بزرگ‌تر کردن متن"'+(store.size===sizes.length-1?' disabled':'')+'>A+</button></div></div>';
@@ -530,7 +715,7 @@ function pageProgress(){
   h+='<div class="legend"><span><i></i>شروع نشده</span><span><i class="p"></i>در حال حفظ</span><span><i class="d"></i>کامل</span></div>';
   h+='<div class="grid">';
   DATA.forEach(function(s){
-    h+='<a class="gcell" href="#read-'+s.id+'">'+medal(s.id,status(s.id),44)+'<b>'+esc(s.fa)+'</b><span>'+fa(count(s.id))+'/'+fa(s.v.length)+'</span></a>';
+    h+='<a class="gcell" style="--h:'+hueOf(s.id)+'" href="#read-'+s.id+'">'+medal(s.id,status(s.id),44)+'<b>'+esc(s.fa)+'</b><span>'+fa(count(s.id))+'/'+fa(s.v.length)+'</span></a>';
   });
   h+='</div>';
   h+='<div id="resetBox" class="confirm"><button type="button" class="link" data-act="resetAllAsk">پاک‌کردن همهٔ پیشرفت‌ها</button></div>';
@@ -837,33 +1022,397 @@ function finishProbe(d){
   if(ex&&micState==='idle')say(idleMessage());
 }
 
+/* ================= v2: colours, icons ================= */
+var HUES=[350,24,40,150,175,205,235,275,310],HUE_IDX={};
+DATA.forEach(function(s,i){HUE_IDX[s.id]=HUES[i%HUES.length];});
+function hueOf(id){return HUE_IDX[id]!==undefined?HUE_IDX[id]:200;}
+var IC={
+  flame:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5s1.2 3.6-1.3 6.3C8.5 11.1 6 13 6 16a6 6 0 0 0 12 0c0-2.6-1.5-4.2-2.6-6-.5 1.3-1.4 2.3-2.5 2.5C13 8.8 12.8 5.2 12 2.5z"/></svg>',
+  heart:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s-8-5.2-8-11a4.5 4.5 0 0 1 8-2.8A4.5 4.5 0 0 1 20 10c0 5.8-8 11-8 11z"/></svg>',
+  star:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
+  bolt:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>',
+  trophy:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 3h10v4a5 5 0 0 1-10 0V3zM3.5 4H7v3a3.5 3.5 0 0 1-3.5-3zM20.5 4H17v3a3.5 3.5 0 0 0 3.5-3zM11 13h2v4h3v3H8v-3h3z"/></svg>',
+  book:'<svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h7a3 3 0 0 1 3 3v13a3 3 0 0 0-3-3H4zM20 4h-7a3 3 0 0 0-3 3v13a3 3 0 0 1 3-3h7z"/></svg>'
+};
+function bigStar(on){return '<svg viewBox="0 0 24 24" class="'+(on?'on':'')+'" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4l-5.9 3.1 1.2-6.5L2.5 9.4l6.6-.9z"/></svg>';}
+
+/* ================= v2: audio player ================= */
+var AUD=new Audio();AUD.preload='metadata';
+var aud={id:0,state:'idle',rate:1,loop:false};
+var RATES=[[0.75,'۰٫۷۵×'],[1,'۱×'],[1.25,'۱٫۲۵×']];
+function pad3(n){return ('00'+n).slice(-3);}
+function fmt(t){if(!isFinite(t)||t<0)t=0;var m=Math.floor(t/60),s=Math.floor(t%60);return fa(m)+':'+fa(('0'+s).slice(-2));}
+function playerHTML(){
+  var h='<section class="card player" id="player"><div class="pl-top"><div><b>گوش دادن به سوره</b><span class="muted small">تلاوت حامد شاکرنژاد</span></div>'
+    +'<button type="button" id="plPlay" class="pl-play" data-pl="toggle" data-on="0" aria-label="پخش" disabled>'
+    +'<svg class="ic pl-i-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>'
+    +'<svg class="ic pl-i-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 5h4v14H7zM13 5h4v14h-4z"/></svg></button></div>'
+    +'<div class="pl-bar"><input id="plSeek" type="range" min="0" max="1000" value="0" aria-label="جابه‌جایی در صوت" disabled>'
+    +'<div class="pl-time"><span id="plCur">۰:۰۰</span><span id="plDur">۰:۰۰</span></div></div>'
+    +'<div class="pl-opts"><span class="muted small">سرعت</span>';
+  RATES.forEach(function(r){h+='<button type="button" class="pill" data-pl="rate" data-v="'+r[0]+'" aria-pressed="'+(aud.rate===r[0]?'true':'false')+'">'+r[1]+'</button>';});
+  h+='<button type="button" class="pill" data-pl="loop" aria-pressed="'+(aud.loop?'true':'false')+'">تکرار</button></div>'
+    +'<p class="muted small" id="plMsg" role="status"></p></section>';
+  return h;
+}
+function uiPlayer(){
+  var play=$('plPlay');if(!play)return;
+  var seek=$('plSeek'),msg=$('plMsg'),ready=(aud.state==='ok');
+  play.disabled=!ready;seek.disabled=!ready;
+  play.dataset.on=AUD.paused?'0':'1';
+  play.setAttribute('aria-label',AUD.paused?'پخش':'توقف');
+  $('plCur').textContent=fmt(AUD.currentTime);
+  $('plDur').textContent=fmt(AUD.duration);
+  if(document.activeElement!==seek&&AUD.duration)seek.value=Math.round(AUD.currentTime/AUD.duration*1000);
+  msg.textContent=aud.state==='loading'?'در حال بارگذاری صوت…'
+    :aud.state==='missing'?'فایل صوتی این سوره هنوز اضافه نشده است. آن را با نام '+pad3(aud.id)+'.mp3 در پوشهٔ audio بگذار.':'';
+}
+['loadedmetadata','durationchange','timeupdate','play','pause','ended'].forEach(function(ev){
+  AUD.addEventListener(ev,function(){
+    if((ev==='loadedmetadata'||ev==='durationchange')&&AUD.duration)aud.state='ok';
+    uiPlayer();
+  });
+});
+AUD.addEventListener('error',function(){aud.state='missing';uiPlayer();});
+function bindPlayer(id){
+  if(aud.id!==id){
+    AUD.pause();aud.id=id;aud.state='loading';
+    AUD.src='audio/'+pad3(id)+'.mp3';AUD.load();
+  }
+  AUD.playbackRate=aud.rate;AUD.defaultPlaybackRate=aud.rate;AUD.loop=aud.loop;
+  uiPlayer();
+}
+
+/* ================= v2: challenge engine ================= */
+var LV=[0,100,250,500,900,1500,2400],LN=['تازه‌کار','نوجو','دانش‌آموز','حافظ‌جو','حافظ ماهر','استاد حفظ','پیشکسوت'];
+function level(xp){
+  var i=0;while(i+1<LV.length&&xp>=LV[i+1])i++;
+  var nx=LV[i+1];
+  return {i:i,name:LN[i],from:LV[i],to:(nx===undefined?null:nx)};
+}
+function rng(seed){var a=seed>>>0;return function(){a|=0;a=a+0x6D2B79F5|0;var t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296;};}
+function hashStr(s){var h=2166136261;for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}return h>>>0;}
+function dayKey(d){d=d||new Date();return d.getFullYear()+'-'+(d.getMonth()+1)+'-'+d.getDate();}
+function yesterdayKey(){var d=new Date();d.setDate(d.getDate()-1);return dayKey(d);}
+function pickOne(arr,R){return arr[Math.floor(R()*arr.length)];}
+function shuffle(a,R){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(R()*(i+1)),t=a[i];a[i]=a[j];a[j]=t;}return a;}
+var TXTN={};DATA.forEach(function(s){s.v.forEach(function(v){TXTN[v]=(TXTN[v]||0)+1;});});
+function uniq(v){return TXTN[v]===1;}
+function sname2(s){return s.id===1?'سورهٔ حمد':'سورهٔ '+s.fa;}
+function wordsOf(v){return v.split(' ');}
+function poolItems(scope){
+  var out=[];
+  DATA.forEach(function(s){
+    var k=(scope==='mem')?count(s.id):s.v.length;
+    for(var i=0;i<k;i++)out.push({s:s,i:i,k:k});
+  });
+  return out;
+}
+/* distractor texts near the answer's length */
+function nearTexts(texts,answer,keyFn,R,n){
+  var seen={},list=[];
+  texts.forEach(function(t){var k=keyFn(t);if(k===keyFn(answer)||seen[k])return;seen[k]=1;list.push(t);});
+  list.sort(function(a,b){return Math.abs(keyFn(a).length-keyFn(answer).length)-Math.abs(keyFn(b).length-keyFn(answer).length)||(R()-0.5);});
+  var out=shuffle(list.slice(0,Math.max(n*3,9)),R).slice(0,n);
+  return out.length===n?out:null;
+}
+function mk(prompt,text,opts,correctText,optAr,info,infoAr){
+  return {prompt:prompt,text:text,opts:opts,correct:opts.indexOf(correctText),optAr:optAr,info:info,infoAr:infoAr||''};
+}
+function makeQ(type,pool,R){
+  var cand,it,v,ans,ds,opts,j;
+  if(type==='next'){
+    cand=pool.filter(function(x){return x.i+1<x.k&&uniq(x.s.v[x.i])&&uniq(x.s.v[x.i+1]);});
+    if(!cand.length)return null;
+    it=pickOne(cand,R);v=it.s.v[it.i];ans=it.s.v[it.i+1];
+    ds=nearTexts(pool.filter(function(x){return uniq(x.s.v[x.i])&&x.s.v[x.i]!==v;}).map(function(x){return x.s.v[x.i];}),ans,compact,R,3);
+    if(!ds)return null;
+    opts=shuffle([ans].concat(ds),R);
+    return mk('آیهٔ بعدی کدام است؟',v,opts,ans,true,sname2(it.s)+'، آیهٔ '+fa(it.i+2),ans);
+  }
+  if(type==='blank'){
+    cand=pool.filter(function(x){var t=x.s.v[x.i];return uniq(t)&&wordsOf(t).length>=4;});
+    if(!cand.length)return null;
+    it=pickOne(cand,R);v=it.s.v[it.i];
+    var ws=wordsOf(v),idxs=[];
+    ws.forEach(function(w,k){if(k>0&&compact(w).length>=3)idxs.push(k);});
+    if(!idxs.length)return null;
+    j=pickOne(idxs,R);ans=ws[j];
+    var inVerse={};ws.forEach(function(w){inVerse[compact(w)]=1;});
+    var allW=[];
+    pool.forEach(function(x){wordsOf(x.s.v[x.i]).forEach(function(w){var c=compact(w);if(c.length>=2&&!inVerse[c])allW.push(w);});});
+    ds=nearTexts(allW,ans,compact,R,3);
+    if(!ds)return null;
+    opts=shuffle([ans].concat(ds),R);
+    var shown=ws.slice();shown[j]='_____';
+    return mk('کلمهٔ جا افتاده کدام است؟',shown.join(' '),opts,ans,true,sname2(it.s)+'، آیهٔ '+fa(it.i+1),v);
+  }
+  if(type==='surah'){
+    cand=pool.filter(function(x){return uniq(x.s.v[x.i]);});
+    if(!cand.length)return null;
+    it=pickOne(cand,R);v=it.s.v[it.i];
+    var others=shuffle(DATA.filter(function(s){return s.id!==it.s.id;}),R).slice(0,3);
+    var names=shuffle([it.s].concat(others),R).map(sname2);
+    return mk('این آیه از کدام سوره است؟',v,names,sname2(it.s),false,sname2(it.s)+'، آیهٔ '+fa(it.i+1),v);
+  }
+  if(type==='first'){
+    cand=pool.filter(function(x){return x.i===0&&uniq(x.s.v[0]);});
+    if(!cand.length)return null;
+    it=pickOne(cand,R);ans=it.s.v[0];
+    ds=shuffle(DATA.filter(function(s){return s.id!==it.s.id&&uniq(s.v[0]);}),R).slice(0,3).map(function(s){return s.v[0];});
+    opts=shuffle([ans].concat(ds),R);
+    return mk('اولین آیهٔ «'+sname2(it.s)+'» کدام است؟','',opts,ans,true,sname2(it.s)+'، آیهٔ ۱',ans);
+  }
+  return null;
+}
+function drawQ(st){
+  var q=null,tries=0;
+  while(!q&&tries++<8){
+    if(!st.types.length)st.types=shuffle(['surah','next','blank','first','next','blank'],st.R);
+    q=makeQ(st.types.pop(),st.pool,st.R);
+  }
+  return q||makeQ('surah',st.pool,st.R);
+}
+
+/* ---- play state ---- */
+var ch=null;
+var LET=['الف','ب','ج','د'],OPTH=[205,150,40,330];
+function curStreak(){var c=store.c;return (c.last===dayKey()||c.last===yesterdayKey())?(c.streak|0):0;}
+function hasMore(){return ch.mode==='daily'?(ch.qi+1<ch.total):(ch.lives>0);}
+function heartsHTML(){
+  var h='<span class="hearts" aria-label="جان‌های مانده: '+fa(ch.lives)+'">';
+  for(var i=0;i<3;i++)h+='<span class="'+(i<ch.lives?'':'off')+'">'+IC.heart+'</span>';
+  return h+'</span>';
+}
+function startChallenge(mode){
+  if(mode==='daily'&&store.c.daily===dayKey()){location.hash='#challenge';return;}
+  var scope=(mode==='daily')?'all':(ui.scope||'all');
+  var pool=poolItems(scope);
+  if(!pool.length){pool=poolItems('all');scope='all';}
+  ch={mode:mode,scope:scope,pool:pool,
+      R:(mode==='daily')?rng(hashStr('juz30-'+dayKey())):Math.random,
+      types:[],total:(mode==='daily')?5:0,qi:0,q:null,score:0,lives:3,combo:0,correct:0,wrong:0,
+      locked:false,limit:(mode==='daily')?20:15,timer:null,t0:0,xpBefore:store.c.xp|0};
+  nextQuestion();
+}
+function nextQuestion(){
+  var q=drawQ(ch);
+  if(!q){finishChallenge();return;}
+  ch.q=q;ch.locked=false;ch.t0=Date.now();
+  renderQ();startTimer();
+}
+function renderQ(){
+  var q=ch.q,h='';
+  h+='<div class="hud"><a class="icon-btn" href="#challenge" aria-label="خروج از چالش">'+ICON.back+'</a>'
+    +'<div class="hud-mid">'+(ch.mode==='daily'?'سؤال '+fa(ch.qi+1)+' از '+fa(ch.total):'چالش بی‌پایان')+'</div>'
+    +'<div class="hud-r">'+(ch.mode==='free'?'<span id="hearts">'+heartsHTML()+'</span>':'')+'<span class="chipk" id="scoreChip">'+IC.bolt+fa(ch.score)+'</span></div></div>';
+  h+='<div class="tbar" aria-hidden="true"><i id="tbarI"></i></div>';
+  h+='<section class="card qcard"><p class="qprompt">'+esc(q.prompt)+'</p>'
+    +(q.text?'<div class="qtext ar" lang="ar" dir="rtl">'+esc(q.text)+'</div>':'')+'</section>';
+  h+='<div class="opts" id="opts">';
+  q.opts.forEach(function(o,k){
+    h+='<button type="button" class="opt'+(q.optAr?' ar-t':'')+'" style="--h:'+OPTH[k]+'" data-ch="opt" data-i="'+k+'">'
+      +'<span class="l">'+LET[k]+'</span><span class="tx"'+(q.optAr?' lang="ar" dir="rtl"':'')+'>'+esc(o)+'</span></button>';
+  });
+  h+='</div><div id="fb" class="fb" role="status" aria-live="polite" hidden></div>';
+  $('play').innerHTML=h;
+  window.scrollTo(0,0);
+}
+function startTimer(){
+  clearInterval(ch.timer);
+  ch.timer=setInterval(function(){
+    if(!ch||ch.locked)return;
+    var left=ch.limit-(Date.now()-ch.t0)/1000,f=Math.max(0,left/ch.limit),el=$('tbarI');
+    if(el){el.style.width=(f*100)+'%';el.style.background='hsl('+Math.round(f*120)+' 80% 42%)';}
+    if(left<=0)answer(-1);
+  },100);
+}
+function answer(k){
+  if(!ch||ch.locked)return;
+  ch.locked=true;clearInterval(ch.timer);
+  var q=ch.q,ok=(k===q.correct),left=Math.max(0,ch.limit-(Date.now()-ch.t0)/1000),pts=0;
+  if(ok){
+    ch.combo++;ch.correct++;
+    pts=10+Math.round(left/ch.limit*5)+Math.min(Math.max(ch.combo-2,0),5);
+    ch.score+=pts;
+  }else{
+    ch.combo=0;ch.wrong++;
+    if(ch.mode==='free')ch.lives--;
+  }
+  [].forEach.call(document.querySelectorAll('#opts .opt'),function(b,i){
+    b.disabled=true;
+    if(i===q.correct)b.classList.add('good');else if(i===k)b.classList.add('bad');
+  });
+  var fb=$('fb');fb.hidden=false;fb.dataset.ok=ok?'1':'0';
+  fb.innerHTML='<p class="fbt">'+(ok?'درست بود! +'+fa(pts)+' امتیاز'+(ch.combo>=3?'، '+fa(ch.combo)+' پیاپی':''):(k<0?'وقت تمام شد.':'نادرست بود.'))+'</p>'
+    +'<p class="fbi">'+esc(q.info)+'</p>'
+    +(q.infoAr?'<div class="fbar" lang="ar" dir="rtl">'+esc(q.infoAr)+'</div>':'')
+    +'<button type="button" class="btn primary block" data-ch="next">'+(hasMore()?'ادامه':'نتیجه')+'</button>';
+  var sc=$('scoreChip');if(sc)sc.innerHTML=IC.bolt+fa(ch.score);
+  var hr=$('hearts');if(hr)hr.innerHTML=heartsHTML();
+  if(!ok&&navigator.vibrate){try{navigator.vibrate(60);}catch(e){}}
+  fb.scrollIntoView({block:'nearest',behavior:reduce?'auto':'smooth'});
+}
+function confetti(){
+  if(reduce)return;
+  var d=document.createElement('div');d.className='confetti';d.setAttribute('aria-hidden','true');
+  var h='';
+  for(var i=0;i<28;i++){
+    h+='<i style="left:'+Math.round(Math.random()*100)+'%;background:hsl('+HUES[i%HUES.length]+' 85% 55%);animation-delay:'+(Math.random()*0.9).toFixed(2)+'s;animation-duration:'+(2.2+Math.random()*1.4).toFixed(2)+'s"></i>';
+  }
+  d.innerHTML=h;document.body.appendChild(d);
+  setTimeout(function(){if(d.parentNode)d.parentNode.removeChild(d);},4500);
+}
+function finishChallenge(){
+  clearInterval(ch.timer);
+  var c=store.c,gain=0,stars=0,title,lvBefore=level(ch.xpBefore);
+  if(ch.mode==='daily'){
+    gain=ch.correct*10+(ch.correct===ch.total?20:0);
+    stars=ch.correct===5?3:ch.correct===4?2:ch.correct===3?1:0;
+    c.streak=(c.last===yesterdayKey())?((c.streak|0)+1):1;
+    c.last=dayKey();c.daily=dayKey();c.dailyScore=ch.correct;
+    if(c.streak>(c.bestStreak|0))c.bestStreak=c.streak;
+    if(ch.correct===ch.total)c.perfect=(c.perfect|0)+1;
+  }else{
+    gain=Math.floor(ch.score/5);
+    stars=ch.score>=150?3:ch.score>=80?2:ch.score>=30?1:0;
+    if(ch.score>(c.bestFree|0))c.bestFree=ch.score;
+  }
+  c.xp=(c.xp|0)+gain;c.games=(c.games|0)+1;
+  touch();
+  var lvAfter=level(c.xp);
+  title=stars===3?'عالی بود!':stars===2?'خیلی خوب!':stars===1?'بد نبود!':'دوباره تلاش کن';
+  var h='<div class="res"><h1>'+title+'</h1><div class="stars">'+bigStar(stars>=1)+bigStar(stars>=2)+bigStar(stars>=3)+'</div>';
+  if(lvAfter.i>lvBefore.i)h+='<div class="lvup">به سطح «'+esc(lvAfter.name)+'» رسیدی!</div>';
+  h+='<div class="rstats"><div><b>'+fa(ch.correct)+'</b><span>پاسخ درست</span></div>'
+    +'<div><b>'+fa(ch.mode==='daily'?ch.correct*10:ch.score)+'</b><span>'+(ch.mode==='daily'?'امتیاز پاسخ‌ها':'امتیاز')+'</span></div>'
+    +'<div><b>+'+fa(gain)+'</b><span>تجربه (XP)</span></div></div>';
+  if(ch.mode==='daily')h+='<p class="muted">'+fa(curStreak())+' روز پیاپی. فردا چالش جدید می‌آید.</p>';
+  else h+='<p class="muted">رکورد تو: '+fa(c.bestFree|0)+' امتیاز</p>';
+  h+='<div class="acts" style="width:100%">'+(ch.mode==='free'?'<button type="button" class="btn primary" data-ch="again">بازی دوباره</button>':'')
+    +'<a class="btn'+(ch.mode==='free'?'':' primary')+'" href="#challenge">بازگشت به چالش</a></div></div>';
+  $('play').innerHTML=h;
+  window.scrollTo(0,0);
+  if(stars===3)confetti();
+}
+
+/* ---- pages ---- */
+function pagePlay(){return '<div id="play"></div>';}
+var BADGES=[
+  {n:'اولین چالش',d:'یک چالش را کامل کن',h:24,ok:function(c){return (c.games|0)>=1;}},
+  {n:'سه روز پیاپی',d:'سه روز چالش روزانه',h:150,ok:function(c){return (c.bestStreak|0)>=3;}},
+  {n:'هفت روز پیاپی',d:'یک هفته بی‌وقفه',h:175,ok:function(c){return (c.bestStreak|0)>=7;}},
+  {n:'بی‌خطا',d:'چالش روزانهٔ ۵ از ۵',h:40,ok:function(c){return (c.perfect|0)>=1;}},
+  {n:'صد امتیاز',d:'در چالش بی‌پایان',h:205,ok:function(c){return (c.bestFree|0)>=100;}},
+  {n:'اولین سوره',d:'یک سورهٔ کامل حفظ کن',h:235,ok:function(c,t){return t.done>=1;}},
+  {n:'ده سوره',d:'ده سورهٔ کامل',h:275,ok:function(c,t){return t.done>=10;}},
+  {n:'پانصد تجربه',d:'۵۰۰ امتیاز XP',h:310,ok:function(c){return (c.xp|0)>=500;}}
+];
+function homeChallengeCard(){
+  var c=store.c,done=(c.daily===dayKey()),st=curStreak();
+  return '<a class="hcard" href="#challenge"><span class="hc-ic">'+IC.flame+'</span><span><b>چالش امروز</b><span>'
+    +(done?'انجام شد، '+fa(c.dailyScore|0)+' از ۵ درست':(st?fa(st)+' روز پیاپی. امروز را از دست نده':'۵ سؤال کوتاه، ۲۰ ثانیه برای هر کدام'))
+    +'</span></span><span class="go">'+(done?'مرور':'شروع')+'</span></a>';
+}
+function pageChallenge(){
+  var c=store.c,lv=level(c.xp|0),t=totals(),done=(c.daily===dayKey()),st=curStreak();
+  var frac=lv.to===null?1:((c.xp|0)-lv.from)/(lv.to-lv.from);
+  var memOk=t.verses>0;if(!memOk&&ui.scope==='mem')ui.scope='all';
+  var h='<div class="title-row"><h1 class="page-title">چالش</h1></div>';
+  h+='<section class="card lvl"><div class="lvl-badge" aria-hidden="true">'+fa(lv.i+1)+'</div><div class="lvl-main"><b>'+esc(lv.name)+'</b>'
+    +'<div class="xpbar"><i style="width:'+Math.round(frac*100)+'%"></i></div>'
+    +'<span class="muted small">'+fa(c.xp|0)+' XP'+(lv.to===null?'':' از '+fa(lv.to))+'</span></div>'
+    +'<div class="streak" title="روز پیاپی">'+IC.flame+'<span>'+fa(st)+'</span></div></section>';
+  h+='<section class="dcard"><h2>چالش روزانه</h2><p>هر روز پنج سؤال تازه، برای همهٔ سوره‌های جزء ۳۰. پاسخ سریع‌تر امتیاز بیشتر دارد.</p>'
+    +'<div class="meta"><span class="tag">'+IC.bolt+'۵ سؤال</span><span class="tag">'+IC.flame+'۲۰ ثانیه</span><span class="tag">'+IC.star+'تا ۳ ستاره</span></div>'
+    +(done?'<a class="btn light" href="#challenge" aria-disabled="true">امروز انجام شد، '+fa(c.dailyScore|0)+' از ۵ درست</a>'
+          :'<a class="btn light" href="#play-daily">شروع چالش امروز</a>')+'</section>';
+  h+='<section class="fcard"><h2>چالش بی‌پایان</h2><p>تا وقتی جان داری ادامه بده. سه جان داری و هر سؤال ۱۵ ثانیه وقت دارد.</p>'
+    +'<div class="meta"><span class="tag">'+IC.heart+'۳ جان</span><span class="tag">'+IC.trophy+'رکورد '+fa(c.bestFree|0)+'</span></div>'
+    +'<div class="scope" role="group" aria-label="سؤال‌ها از">'
+    +'<button type="button" class="pill" data-ch="scope" data-v="all" aria-pressed="'+(ui.scope!=='mem'?'true':'false')+'">همهٔ جزء ۳۰</button>'
+    +'<button type="button" class="pill" data-ch="scope" data-v="mem" aria-pressed="'+(ui.scope==='mem'?'true':'false')+'"'+(memOk?'':' disabled')+'>فقط آیه‌های حفظ‌شده</button></div>'
+    +(memOk?'':'<p class="small">با آزمون یک سوره، گزینهٔ «حفظ‌شده‌ها» فعال می‌شود.</p>')
+    +'<a class="btn light" href="#play-free">شروع</a></section>';
+  h+='<p class="sec">نشان‌ها</p><div class="bgrid">';
+  BADGES.forEach(function(b){
+    var on=b.ok(c,t);
+    h+='<div class="badge'+(on?'':' locked')+'" style="--h:'+b.h+'">'+IC.trophy+'<b>'+b.n+'</b><span>'+b.d+'</span></div>';
+  });
+  h+='</div>';
+  return h;
+}
+
+/* ---- events for the new pieces ---- */
+$('page').addEventListener('click',function(e){
+  var t=e.target.closest('[data-ch],[data-pl]');
+  if(!t)return;
+  var a=t.getAttribute('data-ch');
+  if(a){
+    if(a==='opt')answer(+t.getAttribute('data-i'));
+    else if(a==='next'){
+      if(!ch)return;
+      if(hasMore()){ch.qi++;nextQuestion();}else finishChallenge();
+    }else if(a==='again'){startChallenge('free');}
+    else if(a==='scope'){ui.scope=t.getAttribute('data-v');render(true);}
+    return;
+  }
+  var p=t.getAttribute('data-pl');
+  if(p==='toggle'){
+    if(AUD.paused){
+      var pr=AUD.play();if(pr&&pr.catch)pr.catch(function(){});
+      if('mediaSession' in navigator&&window.MediaMetadata){
+        try{navigator.mediaSession.metadata=new MediaMetadata({title:sname2(SUR[aud.id]),artist:'حامد شاکرنژاد',album:'جزء سی'});}catch(err){}
+      }
+    }else AUD.pause();
+  }else if(p==='rate'){
+    aud.rate=+t.getAttribute('data-v');AUD.playbackRate=aud.rate;AUD.defaultPlaybackRate=aud.rate;
+    [].forEach.call(document.querySelectorAll('[data-pl="rate"]'),function(b){b.setAttribute('aria-pressed',(+b.getAttribute('data-v')===aud.rate)?'true':'false');});
+  }else if(p==='loop'){
+    aud.loop=!aud.loop;AUD.loop=aud.loop;t.setAttribute('aria-pressed',aud.loop?'true':'false');
+  }
+});
+$('page').addEventListener('input',function(e){
+  if(e.target.id==='plSeek'&&AUD.duration)AUD.currentTime=e.target.value/1000*AUD.duration;
+});
+if(/selftest/.test(location.search)){
+  window.__t={DATA:DATA,makeQ:makeQ,poolItems:poolItems,rng:rng,hashStr:hashStr,drawQ:drawQ,shuffle:shuffle,getCh:function(){return ch;},store:store,compact:compact};
+}
+
 /* ================= router ================= */
 var page=$('page'),wrap=$('wrap'),nav=$('nav');
 function route(){
   var h=(location.hash||'').slice(1),m=/^(read|exam|continue)-(\d+)$/.exec(h);
   if(m&&SUR[m[2]])return {name:m[1],id:+m[2]};
-  if(h==='surahs'||h==='progress')return {name:h};
+  if(h==='surahs'||h==='progress'||h==='challenge')return {name:h};
+  var pm=/^play-(daily|free)$/.exec(h);if(pm)return {name:'play',mode:pm[1]};
   return {name:'home'};
 }
 function render(keepScroll){
-  var r=route(),inExam=(r.name==='exam'||r.name==='continue');
+  var r=route(),inExam=(r.name==='exam'||r.name==='continue'),inPlay=(r.name==='play');
   if(ex&&!inExam)endExam();
+  if(ch&&!inPlay){clearInterval(ch.timer);ch=null;}
+  if(!(r.name==='read'&&r.id===aud.id)&&!AUD.paused)AUD.pause();
   document.documentElement.style.setProperty('--q-size',sizes[store.size]+'rem');
   var html='';
   if(r.name==='home')html=pageHome();
   else if(r.name==='surahs')html=pageSurahs();
   else if(r.name==='progress')html=pageProgress();
+  else if(r.name==='challenge')html=pageChallenge();
+  else if(r.name==='play')html=pagePlay();
   else if(r.name==='read')html=pageRead(r.id);
   else html=pageExam(r.id,r.name);
   page.innerHTML=html;
   if(window.__installHook)window.__installHook();
-  nav.hidden=inExam;
-  wrap.classList.toggle('has-nav',!inExam);
-  var tab=(r.name==='read')?'surahs':(inExam?'':r.name);
-  ['home','surahs','progress'].forEach(function(t){
+  nav.hidden=inExam||inPlay;
+  wrap.classList.toggle('has-nav',!(inExam||inPlay));
+  var tab=(r.name==='read')?'surahs':((inExam||inPlay)?'':r.name);
+  ['home','surahs','challenge','progress'].forEach(function(t){
     var a=$('n-'+t);if(t===tab)a.setAttribute('aria-current','page');else a.removeAttribute('aria-current');
   });
   if(inExam)afterExamMount();
+  if(inPlay)startChallenge(r.mode);
+  if(r.name==='read')bindPlayer(r.id);
   if(!keepScroll&&!inExam)window.scrollTo(0,0);
 }
 window.addEventListener('hashchange',function(){render(false);});
@@ -945,25 +1494,99 @@ render(false);
 
 <script>
 (function(){
-  var deferred=null;
+  var deferred=null,shown=false,bar=null,fallbackTimer=null;
+  var KEY='juz30-install',COOLDOWN=3*24*3600*1000;
   var standalone=(window.matchMedia&&matchMedia('(display-mode: standalone)').matches)||window.navigator.standalone===true;
-  var ios=/iphone|ipad|ipod/i.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var ua=navigator.userAgent||'';
+  var ios=/iphone|ipad|ipod/i.test(ua)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var android=/android/i.test(ua);
+  function $(id){return document.getElementById(id);}
+
+  /* ---- reminder memory ---- */
+  function snoozed(){
+    try{var o=JSON.parse(localStorage.getItem(KEY)||'null');return !!(o&&o.t&&Date.now()-o.t<COOLDOWN);}catch(e){return false;}
+  }
+  function snooze(){try{localStorage.setItem(KEY,JSON.stringify({t:Date.now()}));}catch(e){}}
+
+  /* ---- where the bar may appear ---- */
+  function inExam(){return /^#(exam-|continue-|play-)/.test(location.hash);}
+  function gateOpen(){var g=$('gate');return !!(g&&!g.hidden);}
+  function canShow(){return !standalone&&!snoozed()&&!inExam()&&!gateOpen();}
+
+  function removeBar(){if(bar&&bar.parentNode)bar.parentNode.removeChild(bar);bar=null;shown=false;}
+
+  function mode(){
+    if(deferred)return 'prompt';
+    if(ios)return 'ios';
+    if(android&&fallbackReady)return 'manual';
+    return '';
+  }
+  var fallbackReady=false;
+
+  function build(m){
+    var title='برنامه را روی گوشی نصب کن';
+    var text,btns;
+    if(m==='prompt'){
+      text='آیکونش به صفحهٔ گوشی اضافه می‌شود و بدون اینترنت هم باز می‌شود.';
+      btns='<button type="button" class="btn primary" data-i="install">نصب برنامه</button><button type="button" class="btn" data-i="later">بعداً</button>';
+    }else if(m==='ios'){
+      text='در سافاری دکمهٔ اشتراک‌گذاری (مربع با فلش رو به بالا) را بزن و «Add to Home Screen» را انتخاب کن.';
+      btns='<button type="button" class="btn primary" data-i="later">متوجه شدم</button>';
+    }else{
+      text='منوی سه‌نقطهٔ کروم (بالای صفحه) را باز کن و «Install app» یا «Add to Home screen» را بزن.';
+      btns='<button type="button" class="btn primary" data-i="later">متوجه شدم</button>';
+    }
+    var d=document.createElement('div');
+    d.className='ibar';d.setAttribute('dir','rtl');d.setAttribute('lang','fa');
+    d.innerHTML='<div class="ibar-card" role="dialog" aria-labelledby="ibTitle"><div class="ibar-head"><img src="icons/icon-192.png" alt="" width="48" height="48">'
+      +'<div><b id="ibTitle">'+title+'</b><span>'+text+'</span></div></div><div class="ibar-acts">'+btns+'</div></div>';
+    d.addEventListener('click',function(e){
+      var t=e.target.closest('[data-i]');if(!t)return;
+      var a=t.getAttribute('data-i');
+      if(a==='install'&&deferred){
+        var ev=deferred;deferred=null;removeBar();
+        try{ev.prompt();if(ev.userChoice)ev.userChoice.then(function(c){if(!c||c.outcome!=='accepted')snooze();});}catch(err){snooze();}
+      }else{snooze();removeBar();}
+    });
+    return d;
+  }
+
+  function sync(){
+    var m=mode();
+    if(!canShow()||!m){if(shown&&!canShow())removeBar();return;}
+    if(shown)return;
+    bar=build(m);document.body.appendChild(bar);shown=true;
+  }
+
+  /* ---- home-page card (stays as a permanent entry point) ---- */
   function fill(){
-    var box=document.getElementById('installBox');
+    var box=$('installBox');
     if(!box||standalone){return;}
     if(deferred){
       box.innerHTML='<div class="install card"><p>می‌توانی این برنامه را روی گوشی نصب کنی و بدون اینترنت هم از آن استفاده کنی.</p><button type="button" class="btn primary block" id="installBtn">نصب برنامه</button></div>';
-      document.getElementById('installBtn').addEventListener('click',function(){
-        var d=deferred;deferred=null;fill();
-        d.prompt();
+      $('installBtn').addEventListener('click',function(){
+        var d=deferred;deferred=null;fill();removeBar();
+        try{d.prompt();}catch(e){}
       });
     }else if(ios){
       box.innerHTML='<div class="install card"><p>برای نصب در سافاری: دکمهٔ اشتراک‌گذاری را بزن و «Add to Home Screen» را انتخاب کن.</p></div>';
     }else{box.innerHTML='';}
   }
   window.__installHook=fill;
-  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;fill();});
-  window.addEventListener('appinstalled',function(){deferred=null;standalone=true;fill();});
+
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;fill();sync();});
+  window.addEventListener('appinstalled',function(){deferred=null;standalone=true;snooze();removeBar();fill();});
+  window.addEventListener('hashchange',function(){sync();});
+
+  /* wait until the microphone dialog is closed, then show the install bar */
+  var g=$('gate');
+  if(g&&window.MutationObserver){new MutationObserver(function(){setTimeout(sync,350);}).observe(g,{attributes:true,attributeFilter:['hidden']});}
+
+  /* Android Chrome that never sends the install event (already installed or unsupported): one manual hint */
+  fallbackTimer=setTimeout(function(){fallbackReady=true;sync();},6000);
+
+  setTimeout(sync,1200);
+
   if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
     window.addEventListener('load',function(){navigator.serviceWorker.register('sw.js').catch(function(){});});
   }
